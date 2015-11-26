@@ -5,6 +5,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.ottamotta.readability.user.OAuthCredentials;
+import com.ottamotta.readability.user.User;
+import com.ottamotta.readability.user.UserManager;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,7 +21,9 @@ import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
 
-public class OAuthHelper {
+public class AuthManager {
+
+    private UserManager userManager = UserManager.getInstance();
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -26,7 +32,7 @@ public class OAuthHelper {
     interface Listener {
         void onRequestUrlReceived(String url);
 
-        void onAccessTokenReceived(String accessToken);
+        void onAuthCredsReceived(OAuthCredentials creds);
 
         void onAuthFailed();
     }
@@ -47,16 +53,16 @@ public class OAuthHelper {
 
     static final String CALLBACK_URL = "readability://ottamotta.com";
 
-    private static OAuthHelper instance;
+    private static AuthManager instance;
 
-    public static synchronized OAuthHelper getInstance() {
+    public static synchronized AuthManager getInstance() {
         if (instance == null) {
-            instance = new OAuthHelper();
+            instance = new AuthManager();
         }
         return instance;
     }
 
-    private OAuthHelper() {
+    private AuthManager() {
         consumer = new CommonsHttpOAuthConsumer(CLIENT_KEY, CLIENT_SECRET);
         provider = new CommonsHttpOAuthProvider(
                 REQUEST_TOKEN_ENDPOINT,
@@ -66,7 +72,8 @@ public class OAuthHelper {
         callbackUrl = CALLBACK_URL;
     }
 
-    public void startAuth() {
+    public void startAuth(@NonNull User user) {
+        userManager.setCurrentUser(user);
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -87,13 +94,11 @@ public class OAuthHelper {
         return new String[]{token, verifier};
     }
 
-    public String[] getAccessToken(String verifier)
+    public OAuthCredentials getOAuthData(String verifier)
             throws OAuthMessageSignerException, OAuthNotAuthorizedException,
             OAuthExpectationFailedException, OAuthCommunicationException {
         provider.retrieveAccessToken(consumer, verifier);
-        return new String[]{
-                consumer.getToken(), consumer.getTokenSecret()
-        };
+        return new OAuthCredentials(consumer.getToken(), consumer.getTokenSecret());
     }
 
     public void setCallbackUrl(final String url) {
@@ -103,14 +108,19 @@ public class OAuthHelper {
                 Uri uri = Uri.parse(url);
                 final String[] verifier = getVerifier(uri);
                 try {
-                    String[] accessToken = getAccessToken(verifier[1]);
-                    notifyAccessTokenReceived(accessToken[1]);
+                    OAuthCredentials oAuthCredentials = getOAuthData(verifier[1]);
+                    saveOAuthData(oAuthCredentials);
+                    notifyOAuthDataReceived(oAuthCredentials);
                 } catch (Exception e) {
                     notifyAuthFailed();
                 }
             }
         });
 
+    }
+
+    private void saveOAuthData(OAuthCredentials oAuthCredentials) {
+        userManager.updateOAthData(oAuthCredentials);
     }
 
     private void notifyRequestUrlReceived(final String url) {
@@ -124,12 +134,12 @@ public class OAuthHelper {
         }
     }
 
-    private void notifyAccessTokenReceived(final String accessToken) {
+    private void notifyOAuthDataReceived(final OAuthCredentials oAuthCredentials) {
         if (listener != null) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onAccessTokenReceived(accessToken);
+                    listener.onAuthCredsReceived(oAuthCredentials);
                 }
             });
         }
@@ -148,5 +158,13 @@ public class OAuthHelper {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public static String getClientKey() {
+        return CLIENT_KEY;
+    }
+
+    public static String getClientSecret() {
+        return CLIENT_SECRET;
     }
 }

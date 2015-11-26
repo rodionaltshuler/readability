@@ -1,7 +1,6 @@
 package com.ottamotta.readability.auth;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -11,12 +10,16 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.ottamotta.readability.R;
+import com.ottamotta.readability.common.ui.BaseActivity;
+import com.ottamotta.readability.library.LibraryActivity;
+import com.ottamotta.readability.user.OAuthCredentials;
+import com.ottamotta.readability.user.UserManager;
 
 import butterknife.Bind;
 import butterknife.BindInt;
 import butterknife.ButterKnife;
 
-public class AuthActivity extends AppCompatActivity {
+public class AuthActivity extends BaseActivity {
 
     private static final String TAG = AuthActivity.class.getSimpleName();
 
@@ -29,9 +32,9 @@ public class AuthActivity extends AppCompatActivity {
     @BindInt(R.integer.max_progress)
     int maxProgress;
 
-    private OAuthHelper oAuthHelper = OAuthHelper.getInstance();
+    private AuthManager oAuthHelper = AuthManager.getInstance();
 
-    private OAuthHelper.Listener oauthListener = new OAuthHelper.Listener() {
+    private AuthManager.Listener oauthListener = new AuthManager.Listener() {
         @Override
         public void onRequestUrlReceived(String url) {
             webView.loadUrl(url);
@@ -39,8 +42,9 @@ public class AuthActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onAccessTokenReceived(String accessToken) {
-            Toast.makeText(AuthActivity.this, "Got access token: " + accessToken, Toast.LENGTH_LONG).show();
+        public void onAuthCredsReceived(OAuthCredentials credentials) {
+            Log.d(TAG, "Got OAuth credentials: " + credentials.toString());
+            LibraryActivity.start(AuthActivity.this);
         }
 
         @Override
@@ -74,7 +78,7 @@ public class AuthActivity extends AppCompatActivity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (url.startsWith(OAuthHelper.CALLBACK_URL)) {
+            if (url.startsWith(AuthManager.CALLBACK_URL)) {
                 oAuthHelper.setCallbackUrl(url);
                 return true;
             }
@@ -91,8 +95,13 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        oAuthHelper.setListener(oauthListener);
-        oAuthHelper.startAuth();
+        if (UserManager.getInstance().getoAuthCredentials() != null) {
+            LibraryActivity.start(this);
+            finish();
+        } else {
+            oAuthHelper.setListener(oauthListener);
+            oAuthHelper.startAuth(UserManager.getInstance().getMe());
+        }
     }
 
     @Override
