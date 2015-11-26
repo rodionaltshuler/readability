@@ -31,4 +31,8 @@ public class CredentialsManager {
     OAuthCredentials getoAuthCredentials() {
         return credentialsRepository.getCredentials();
     }
+
+    public boolean isAuthorized() {
+        return getoAuthCredentials() != null;
+    }
 }

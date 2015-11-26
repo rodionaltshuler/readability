@@ -1,5 +1,7 @@
 package com.ottamotta.readability.auth;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,6 +54,10 @@ public class AuthActivity extends BaseActivity {
         }
     };
 
+
+    public static void start(Activity src) {
+        src.startActivity(new Intent(src, AuthActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
