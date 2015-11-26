@@ -5,4 +5,6 @@
     <color name="colorAccent">#7b7b7b</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="light_pressed_color">#3eff0400</color>
 </resources>

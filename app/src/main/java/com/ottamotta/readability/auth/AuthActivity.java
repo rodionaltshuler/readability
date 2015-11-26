@@ -7,13 +7,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.ottamotta.readability.R;
 import com.ottamotta.readability.common.ui.BaseActivity;
-import com.ottamotta.readability.library.LibraryActivity;
-import com.ottamotta.readability.credentials.OAuthCredentials;
 import com.ottamotta.readability.credentials.CredentialsManager;
+import com.ottamotta.readability.credentials.OAuthCredentials;
+import com.ottamotta.readability.library.LibraryActivity;
 
 import butterknife.Bind;
 import butterknife.BindInt;
@@ -49,7 +48,7 @@ public class AuthActivity extends BaseActivity {
 
         @Override
         public void onAuthFailed() {
-            Toast.makeText(AuthActivity.this, "Not authorized", Toast.LENGTH_SHORT).show();
+            showMessage("Not authorized");
         }
     };
 

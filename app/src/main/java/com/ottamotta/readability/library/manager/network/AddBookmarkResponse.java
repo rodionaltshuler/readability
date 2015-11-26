@@ -2,20 +2,22 @@ package com.ottamotta.readability.library.manager.network;
 
 public class AddBookmarkResponse {
 
-    enum Status {
+    public enum Status {
 
-        UNKNOWN(-1),
-        ACCEPTED(202),
-        INVALID_URL(400),
-        CONFLICT(409),
-        NOT_FOUND(404);
+        UNKNOWN(-1, "Error adding bookmark"),
+        ACCEPTED(202, "Bookmark added successfully"),
+        INVALID_URL(400, "Error adding bookmark: invalid URL"),
+        CONFLICT(409, "Bookmark already exists"),
+        NOT_FOUND(404, "Error adding bookmark: NOT FOUND");
 
         private static final Status DEFAULT_STATUS = UNKNOWN;
 
         private int code;
+        private String message;
 
-        Status(int code) {
+        Status(int code, String message) {
             this.code = code;
+            this.message = message;
         }
 
         public static Status byCode(int code) {
@@ -25,6 +27,10 @@ public class AddBookmarkResponse {
                 }
             }
             return DEFAULT_STATUS;
+        }
+
+        public String getMessage() {
+            return message;
         }
     }
 

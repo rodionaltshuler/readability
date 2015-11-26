@@ -1,9 +1,11 @@
 package com.ottamotta.readability.library;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.google.common.collect.Lists;
+import com.ottamotta.readability.common.ui.SelectionListener;
 import com.ottamotta.readability.library.entity.Bookmark;
 
 import java.util.List;
@@ -16,8 +18,10 @@ public class BookmarksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int BOOKMARK_VIEW_TYPE = 1;
 
 
-    public BookmarksAdapter() {
+    private SelectionListener<Bookmark> selectionListener;
 
+    public BookmarksAdapter(@NonNull SelectionListener<Bookmark> selectionListener) {
+        this.selectionListener = selectionListener;
     }
 
     public void addAll(List<Bookmark> bookmarkList) {
@@ -32,7 +36,7 @@ public class BookmarksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 return EmptyBookmarksViewHolder.create(parent);
             case BOOKMARK_VIEW_TYPE:
             default:
-                return BookmarkViewHolder.create(parent);
+                return BookmarkViewHolder.create(parent, selectionListener);
         }
     }
 

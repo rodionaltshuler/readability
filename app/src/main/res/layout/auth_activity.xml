@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
+    <include layout="@layout/toolbar_layout" />
+
     <WebView
+        android:layout_marginTop="@dimen/actionbar_height"
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ProgressBar
+        android:layout_marginTop="@dimen/actionbar_height"
         style="?android:attr/progressBarStyleHorizontal"
         android:id="@+id/progress"
         android:max="@integer/max_progress"
@@ -18,4 +24,4 @@
         android:layout_height="2dp" />
 
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
