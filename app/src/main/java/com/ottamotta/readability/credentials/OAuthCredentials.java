@@ -1,4 +1,4 @@
-package com.ottamotta.readability.user;
+package com.ottamotta.readability.credentials;
 
 import com.google.gson.annotations.Expose;
 

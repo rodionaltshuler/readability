@@ -5,9 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
-import com.ottamotta.readability.user.OAuthCredentials;
-import com.ottamotta.readability.user.User;
-import com.ottamotta.readability.user.UserManager;
+import com.ottamotta.readability.credentials.OAuthCredentials;
+import com.ottamotta.readability.credentials.CredentialsManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +22,7 @@ import oauth.signpost.exception.OAuthNotAuthorizedException;
 
 public class AuthManager {
 
-    private UserManager userManager = UserManager.getInstance();
+    private CredentialsManager credentialsManager = CredentialsManager.getInstance();
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -72,8 +71,7 @@ public class AuthManager {
         callbackUrl = CALLBACK_URL;
     }
 
-    public void startAuth(@NonNull User user) {
-        userManager.setCurrentUser(user);
+    public void startAuth() {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -120,7 +118,7 @@ public class AuthManager {
     }
 
     private void saveOAuthData(OAuthCredentials oAuthCredentials) {
-        userManager.updateOAthData(oAuthCredentials);
+        credentialsManager.updateOAuthData(oAuthCredentials);
     }
 
     private void notifyRequestUrlReceived(final String url) {

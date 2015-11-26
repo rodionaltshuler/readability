@@ -1,4 +1,4 @@
-package com.ottamotta.readability.library.network;
+package com.ottamotta.readability.library.manager.network;
 
 import android.support.annotation.WorkerThread;
 import android.util.Log;

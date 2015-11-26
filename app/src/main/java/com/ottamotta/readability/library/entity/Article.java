@@ -44,6 +44,50 @@ public class Article {
     private boolean processed;
 
 
+    public String getId() {
+        return id;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getLeadImageUrl() {
+        return leadImageUrl;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getExcerpt() {
+        return excerpt;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public int getWordCount() {
+        return wordCount;
+    }
+
+    public Date getDatePublished() {
+        return datePublished;
+    }
+
+    public boolean isProcessed() {
+        return processed;
+    }
+
     @Override
     public String toString() {
         return "Article{" +

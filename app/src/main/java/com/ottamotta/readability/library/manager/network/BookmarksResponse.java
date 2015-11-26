@@ -1,4 +1,4 @@
-package com.ottamotta.readability.library.network;
+package com.ottamotta.readability.library.manager.network;
 
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;

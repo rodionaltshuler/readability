@@ -1,4 +1,4 @@
-package com.ottamotta.readability.library.network;
+package com.ottamotta.readability.library.manager.network;
 
 import com.ottamotta.readability.library.entity.Bookmark;
 

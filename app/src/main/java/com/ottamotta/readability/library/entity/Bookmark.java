@@ -70,4 +70,52 @@ public class Bookmark {
                 ", id=" + id +
                 '}';
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public String getReadPercent() {
+        return readPercent;
+    }
+
+    public Date getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public Date getDateArchived() {
+        return dateArchived;
+    }
+
+    public Date getDateOpened() {
+        return dateOpened;
+    }
+
+    public Date getDateAdded() {
+        return dateAdded;
+    }
+
+    public String getArticleHref() {
+        return articleHref;
+    }
+
+    public Date getDateFavorited() {
+        return dateFavorited;
+    }
+
+    public boolean isArchive() {
+        return archive;
+    }
 }

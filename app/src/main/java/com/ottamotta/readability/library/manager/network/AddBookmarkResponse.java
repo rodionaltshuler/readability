@@ -1,4 +1,4 @@
-package com.ottamotta.readability.library.network;
+package com.ottamotta.readability.library.manager.network;
 
 public class AddBookmarkResponse {
 
@@ -6,6 +6,7 @@ public class AddBookmarkResponse {
 
         UNKNOWN(-1),
         ACCEPTED(202),
+        INVALID_URL(400),
         CONFLICT(409),
         NOT_FOUND(404);
 

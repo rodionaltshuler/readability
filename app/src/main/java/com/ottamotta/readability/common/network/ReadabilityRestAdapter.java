@@ -1,14 +1,13 @@
 package com.ottamotta.readability.common.network;
 
+import android.util.Log;
+
 import com.facebook.stetho.okhttp.StethoInterceptor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ottamotta.readability.auth.AuthManager;
-import com.ottamotta.readability.user.OAuthCredentials;
-import com.ottamotta.readability.user.UserManager;
+import com.ottamotta.readability.credentials.CredentialsManager;
+import com.ottamotta.readability.credentials.OAuthCredentials;
 import com.squareup.okhttp.OkHttpClient;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.RestAdapter;
@@ -20,13 +19,14 @@ import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 
 public class ReadabilityRestAdapter {
 
+    private static final String TAG = ReadabilityRestAdapter.class.getSimpleName();
+
     private RestAdapter restAdapter;
 
     private static final String serverUrl = "https://www.readability.com";
 
     private static ReadabilityRestAdapter instance;
 
-    private Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer()).create();
 
     public static synchronized ReadabilityRestAdapter getInstance() {
         if (null == instance) {
@@ -40,7 +40,7 @@ public class ReadabilityRestAdapter {
                 .setEndpoint(serverUrl)
                 .setClient(getClient())
                 .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setConverter(new GsonConverter(gson))
+                .setConverter(new GsonConverter(GsonWrapper.getGson()))
                 .build();
     }
 
@@ -50,10 +50,12 @@ public class ReadabilityRestAdapter {
         httpClient.setReadTimeout(10, TimeUnit.SECONDS);
         httpClient.networkInterceptors().add(new StethoInterceptor());
 
-        OAuthCredentials credentials = UserManager.getInstance().getoAuthCredentials();
+        OAuthCredentials credentials = CredentialsManager.getInstance().getoAuthCredentials();
         if (credentials != null) {
             OkHttpOAuthConsumer consumer = fromOAuthCreds(credentials, AuthManager.getClientKey(), AuthManager.getClientSecret());
             httpClient.interceptors().add(new SigningInterceptor(consumer));
+        } else {
+            Log.d(TAG, "Credentials is NULL");
         }
 
         return new OkClient(httpClient);

@@ -12,8 +12,8 @@ import android.widget.Toast;
 import com.ottamotta.readability.R;
 import com.ottamotta.readability.common.ui.BaseActivity;
 import com.ottamotta.readability.library.LibraryActivity;
-import com.ottamotta.readability.user.OAuthCredentials;
-import com.ottamotta.readability.user.UserManager;
+import com.ottamotta.readability.credentials.OAuthCredentials;
+import com.ottamotta.readability.credentials.CredentialsManager;
 
 import butterknife.Bind;
 import butterknife.BindInt;
@@ -60,6 +60,15 @@ public class AuthActivity extends BaseActivity {
         setContentView(R.layout.auth_activity);
         ButterKnife.bind(this);
         setupWebView();
+
+        if (CredentialsManager.getInstance().getoAuthCredentials() != null) {
+            LibraryActivity.start(this);
+            finish();
+        } else {
+            oAuthHelper.setListener(oauthListener);
+            oAuthHelper.startAuth();
+        }
+
     }
 
     private WebChromeClient webChromeClient = new WebChromeClient() {
@@ -95,13 +104,7 @@ public class AuthActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (UserManager.getInstance().getoAuthCredentials() != null) {
-            LibraryActivity.start(this);
-            finish();
-        } else {
-            oAuthHelper.setListener(oauthListener);
-            oAuthHelper.startAuth(UserManager.getInstance().getMe());
-        }
+        oAuthHelper.setListener(oauthListener);
     }
 
     @Override

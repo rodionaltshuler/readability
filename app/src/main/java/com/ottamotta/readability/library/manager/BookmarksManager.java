@@ -1,14 +1,13 @@
-package com.ottamotta.readability.library;
+package com.ottamotta.readability.library.manager;
 
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.ottamotta.readability.common.ReadabilityException;
 import com.ottamotta.readability.library.entity.Bookmark;
-import com.ottamotta.readability.library.network.AddBookmarkResponse;
-import com.ottamotta.readability.library.network.BookmarkRestServiceWrapper;
+import com.ottamotta.readability.library.manager.network.AddBookmarkResponse;
+import com.ottamotta.readability.library.manager.network.BookmarkRestServiceWrapper;
 
 import java.util.List;
 import java.util.Set;
@@ -17,23 +16,35 @@ import java.util.concurrent.Executors;
 
 public class BookmarksManager {
 
+    private boolean isLoading;
+
     private static BookmarksManager instance;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Set<Listener> listeners = Sets.newConcurrentHashSet();
 
+    private BookmarksRepository repository = new BookmarksRepository();
+
     private static Handler uiHandler = new Handler(Looper.getMainLooper());
 
     private BookmarkRestServiceWrapper restServiceWrapper = BookmarkRestServiceWrapper.getInstance();
 
-    private List<Bookmark> loadedBookmarks = Lists.newArrayList();
-
     public static abstract class Listener {
-        void onBookmarkAdded(AddBookmarkResponse addBookmarkResponse) {}
-        void onBookmarkAddFailed(ReadabilityException e) {}
-        void onBookmarksLoaded(List<Bookmark> bookmarks) {}
-        void onBookmarksLoadingFailed(ReadabilityException e) {}
+        public void onBookmarkAdded(AddBookmarkResponse addBookmarkResponse) {
+        }
+
+        public void onBookmarkAddFailed(ReadabilityException e) {
+        }
+
+        public void onBookmarksLoaded(List<Bookmark> bookmarks) {
+        }
+
+        public void onBookmarksLoadingFailed(ReadabilityException e) {
+        }
+
+        public void onBookmarksLoadingStatusChanged(boolean isLoading) {}
+
     }
 
     public static synchronized BookmarksManager getInstance() {
@@ -70,15 +81,49 @@ public class BookmarksManager {
     }
 
     public void loadBookmarks() {
+        loadBookmarksInternal(false);
+    }
+
+    public void loadBookmarksForce(){
+        loadBookmarksInternal(true);
+    }
+
+    private void loadBookmarksInternal(final boolean force) {
+        if (isLoading) return;
         executorService.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    List<Bookmark> bookmarks = restServiceWrapper.getBookmarks();
-                    loadedBookmarks.addAll(bookmarks);
+                    setLoading(true);
+                    if (force) {
+                        repository.invalidate();
+                    }
+                    List<Bookmark> bookmarks = repository.getAll();
                     notifyBookmarksLoaded(bookmarks);
                 } catch (ReadabilityException e) {
                     notifyBookmarksLoadingFailed(e);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
+    }
+
+    private void setLoading(boolean loading) {
+        isLoading = loading;
+        notifyBookmarkLoadingStatusChanged(loading);
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    private void notifyBookmarkLoadingStatusChanged(final boolean isLoading) {
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (Listener l : listeners) {
+                    l.onBookmarksLoadingStatusChanged(isLoading);
                 }
             }
         });
@@ -119,7 +164,7 @@ public class BookmarksManager {
         });
     }
 
-    private void notifyBookmarksLoadingFailed(final  ReadabilityException e) {
+    private void notifyBookmarksLoadingFailed(final ReadabilityException e) {
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
