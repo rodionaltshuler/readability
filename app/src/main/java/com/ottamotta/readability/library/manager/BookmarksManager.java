@@ -95,10 +95,7 @@ public class BookmarksManager {
             public void run() {
                 try {
                     setLoading(true);
-                    if (force) {
-                        repository.invalidate();
-                    }
-                    List<Bookmark> bookmarks = repository.getAll();
+                    List<Bookmark> bookmarks = repository.getAll(force);
                     notifyBookmarksLoaded(bookmarks);
                 } catch (ReadabilityException e) {
                     notifyBookmarksLoadingFailed(e);

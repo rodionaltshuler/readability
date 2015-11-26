@@ -62,13 +62,13 @@ public class BookmarksRepository {
 
 
     @WorkerThread
-    public List<Bookmark> getAll() throws ReadabilityException {
-        if (bookmarks.isEmpty()) {
+    public List<Bookmark> getAll(boolean invalidateCache) throws ReadabilityException {
+        if (bookmarks.isEmpty() && !invalidateCache) {
             Log.d(TAG, "Bookmarks is empty - loading from cache");
             bookmarks = loadFromCache();
             Log.d(TAG, "Bookmarks size after loading from cache: " + bookmarks.size());
         }
-        if (bookmarks.isEmpty()) {
+        if (bookmarks.isEmpty() || invalidateCache) {
             Log.d(TAG, "Bookmarks cache is empty - loading from server");
             bookmarks = loadFromServer();
             Log.d(TAG, "Bookmarks size after loading from server: " + bookmarks.size());
@@ -77,11 +77,6 @@ public class BookmarksRepository {
         return Lists.newArrayList(bookmarks);
     }
 
-
-    @WorkerThread
-    void invalidate() {
-        clearCache();
-    }
 
     private SharedPreferences getPrefs() {
         return ReadabilityApp.getInstance().getSharedPreferences(BookmarksRepository.class.getSimpleName(), Context.MODE_PRIVATE);
