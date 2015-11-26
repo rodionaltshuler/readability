@@ -90,7 +90,6 @@ public class LibraryActivity extends BaseActivity {
         setContentView(R.layout.library_activity);
         ButterKnife.bind(this);
         recyclerView.setLayoutManager(getLayoutManager());
-        bookmarksManager.loadBookmarks();
         adapter = new BookmarksAdapter(bookmarkSelectionListener);
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
@@ -105,6 +104,9 @@ public class LibraryActivity extends BaseActivity {
         super.onResume();
         setRefreshing(bookmarksManager.isLoading());
         bookmarksManager.register(listener);
+        if (adapter.isEmpty()) {
+            bookmarksManager.loadBookmarks();
+        }
     }
 
     @Override
