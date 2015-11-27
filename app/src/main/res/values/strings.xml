@@ -5,4 +5,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="empty_bookmarks">No bookmarks  - add something</string>
     <string name="open_link">Open link</string>
+    <string name="add">Add</string>
+    <string name="input_link_hint">Input link to bookmark</string>
+    <string name="library">Library</string>
 </resources>

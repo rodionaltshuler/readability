@@ -7,4 +7,5 @@
     <color name="black_overlay">#66000000</color>
 
     <color name="light_pressed_color">#3eff0400</color>
+    <color name="hint_color">#ffc4c3</color>
 </resources>

@@ -49,16 +49,7 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:titleTextColor="@android:color/white">
 
-
-                <TextView
-                    android:id="@android:id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="24dp" />
+                <include layout="@layout/toolbar_title_textview" />
 
             </android.support.v7.widget.Toolbar>
 

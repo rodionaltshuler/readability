@@ -55,6 +55,7 @@ public class BookmarkDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookmark_details_activity);
         ButterKnife.bind(this);
+        //TODO move following UI presentation code in some kind of BookmarkPresenter, use it here and in BookmarkViewHolder
         bookmark = (Bookmark) getIntent().getSerializableExtra(EXTRA_BOOKMARK);
         domain.setText(bookmark.getArticle().getDomain());
         author.setText(bookmark.getArticle().getAuthor());

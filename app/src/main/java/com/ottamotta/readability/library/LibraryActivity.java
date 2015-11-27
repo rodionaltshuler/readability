@@ -6,6 +6,11 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.ottamotta.readability.R;
 import com.ottamotta.readability.auth.AuthActivity;
@@ -22,6 +27,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.BindInt;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class LibraryActivity extends BaseActivity {
 
@@ -34,6 +40,12 @@ public class LibraryActivity extends BaseActivity {
 
     @Bind(R.id.swipe_to_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    @Bind(android.R.id.title)
+    TextView toolbarTitle;
+
+    @Bind(R.id.add_bookmark_input)
+    EditText addBookmarkInput;
 
     @BindInt(R.integer.bookmark_columns_count)
     int columns;
@@ -113,6 +125,34 @@ public class LibraryActivity extends BaseActivity {
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
         handleSendText(getIntent());
+
+        addBookmarkInput.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    addBookmarkFromInput();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void addBookmarkFromInput() {
+        String url = addBookmarkInput.getText().toString();
+        if (!TextUtils.isEmpty(url)) {
+            bookmarksManager.addBookmark(url);
+        }
+    }
+
+    @OnClick(R.id.add_bookmark_button)
+    void onAddBookmarkClicked() {
+        addBookmarkFromInput();
+    }
+
+    @Override
+    protected void setupActionBar() {
+        super.setupActionBar();
+        toolbarTitle.setText(R.string.library);
     }
 
     @Override
