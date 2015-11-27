@@ -1,8 +1,10 @@
 package com.ottamotta.readability.library;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.widget.ImageView;
@@ -78,6 +80,12 @@ public class BookmarkDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.open_link_button)
     void onOpenLinkClicked() {
-        //TODO
+        try {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(bookmark.getArticle().getUrl()));
+            startActivity(i);
+        } catch (ActivityNotFoundException e) {
+            showMessage("Can't open link in browser: " + bookmark.getArticle().getUrl());
+        }
     }
 }
