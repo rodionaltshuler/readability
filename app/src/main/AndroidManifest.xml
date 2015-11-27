@@ -37,6 +37,8 @@
 
         </activity>
 
+        <activity android:name=".library.BookmarkDetailsActivity"/>
+
 
     </application>
 

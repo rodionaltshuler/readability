@@ -2,11 +2,11 @@ package com.ottamotta.readability.library.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.ottamotta.readability.library.entity.Article;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Bookmark {
+public class Bookmark implements Serializable {
 
     @Expose
     private int id;

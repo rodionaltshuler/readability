@@ -53,7 +53,7 @@ public class LibraryActivity extends BaseActivity {
     private SelectionListener<Bookmark> bookmarkSelectionListener = new SelectionListener<Bookmark>() {
         @Override
         public void onItemSelected(Bookmark item) {
-            //TODO handle bookmark click
+            BookmarkDetailsActivity.start(LibraryActivity.this, item);
         }
     };
 

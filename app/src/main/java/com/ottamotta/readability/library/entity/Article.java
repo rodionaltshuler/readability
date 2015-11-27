@@ -3,9 +3,10 @@ package com.ottamotta.readability.library.entity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Article {
+public class Article implements Serializable {
 
     @Expose
     private String id;
