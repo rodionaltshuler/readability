@@ -1,19 +1,17 @@
 package com.ottamotta.readability.library.manager;
 
 import android.test.AndroidTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
 
 import com.ottamotta.readability.common.network.ReadabilityRestAdapter;
+import com.ottamotta.readability.library.entity.Bookmark;
 import com.ottamotta.readability.library.manager.network.BookmarkRestServiceWrapper;
 import com.ottamotta.readability.library.manager.network.MockRetrofitClient;
+
+import java.util.List;
 
 public class BookmarksRepositoryTest extends AndroidTestCase {
 
     public static final String EMPTY_BOOKMARKS_RESPONSE = "{}";
-
-        private ReadabilityRestAdapter mockRestAdapter;
-
-    private BookmarkRestServiceWrapper restServiceWrapper;
 
     private MockRetrofitClient mockClient;
 
@@ -23,12 +21,11 @@ public class BookmarksRepositoryTest extends AndroidTestCase {
     public void setUp() throws Exception {
         super.setUp();
         mockClient = new MockRetrofitClient();
-        mockRestAdapter = ReadabilityRestAdapter.newMockRestAdapter(mockClient);
-        restServiceWrapper = new BookmarkRestServiceWrapper(mockRestAdapter);
-        repository = new BookmarksRepository(restServiceWrapper);
+        ReadabilityRestAdapter mockRestAdapter = ReadabilityRestAdapter.newMockRestAdapter(mockClient);
+        BookmarkRestServiceWrapper restServiceWrapper = new BookmarkRestServiceWrapper(mockRestAdapter);
+        repository = new BookmarksRepository(restServiceWrapper, new BookmarksMemoryCache());
     }
 
-    @SmallTest
     public void testEmptyRepositoryAfterForceRefreshAndSuccessfullEmptyResponse() throws Exception {
         mockClient.setResponseString(EMPTY_BOOKMARKS_RESPONSE);
         mockClient.setStatusCode(200);
@@ -37,13 +34,29 @@ public class BookmarksRepositoryTest extends AndroidTestCase {
 
     }
 
-    @SmallTest
     public void testEmptyRepositoryAfterForceRefreshAndSuccessfullEmptyResponseNegative() throws Exception {
         mockClient.setResponseString(NON_EMPTY_BOOKMARKS_RESPONSE);
         mockClient.setStatusCode(200);
         boolean empty = repository.getAll(true).isEmpty();
         assertFalse("The repository is empty with bookmarks got from server", empty);
     }
+
+    public void testCacheNotInvalidatedOnForceRefreshAfterServerError() throws Exception {
+        mockClient.setResponseString(NON_EMPTY_BOOKMARKS_RESPONSE);
+        mockClient.setStatusCode(200);
+        List<Bookmark> initialBookmarks = repository.getAll(false); //put some in repo
+        assertFalse("Got successfull server response with bookmarks, but empty bookmarks list returned", initialBookmarks.isEmpty());
+        mockClient.setResponseString(EMPTY_BOOKMARKS_RESPONSE);
+        mockClient.setStatusCode(404);
+        try {
+            repository.getAll(false);
+        } catch (Exception e) {
+            //ignore
+        }
+        assertFalse("Cached bookmarks from 1st request wrongly invalidated after 2nd request failed", repository.getAll(false).isEmpty());
+    }
+
+    //private static final List<Bookmark> simpleBookmarksList = Lists.newArrayList(new Bookmark(), new Bookmark());
 
     private final String NON_EMPTY_BOOKMARKS_RESPONSE = "{\n" +
             "    \"bookmarks\": [\n" +
