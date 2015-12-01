@@ -35,6 +35,17 @@ public class ReadabilityRestAdapter {
         return instance;
     }
 
+    public static synchronized ReadabilityRestAdapter newMockRestAdapter(Client client) {
+        ReadabilityRestAdapter readabilityRestAdapter = new ReadabilityRestAdapter();
+        readabilityRestAdapter.restAdapter =
+                new retrofit.RestAdapter.Builder()
+                        .setEndpoint(serverUrl)
+                        .setClient(client)
+                        .setConverter(new GsonConverter(GsonWrapper.getGson()))
+                        .build();
+        return readabilityRestAdapter;
+    }
+
     private ReadabilityRestAdapter() {
         restAdapter = new retrofit.RestAdapter.Builder()
                 .setEndpoint(serverUrl)

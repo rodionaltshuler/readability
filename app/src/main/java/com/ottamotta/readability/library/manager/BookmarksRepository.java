@@ -23,14 +23,18 @@ public class BookmarksRepository {
 
     private List<Bookmark> bookmarks = Lists.newArrayList();
 
-    private BookmarkRestServiceWrapper restServiceWrapper = BookmarkRestServiceWrapper.getInstance();
+    private BookmarkRestServiceWrapper restServiceWrapper;
 
     private Gson gson = GsonWrapper.getGson();
 
     private static final String KEY_BOOKMARKS = "key_bookmarks";
 
     BookmarksRepository() {
+        this.restServiceWrapper = BookmarkRestServiceWrapper.getInstance();
+    }
 
+    BookmarksRepository(BookmarkRestServiceWrapper restServiceWrapper) {
+        this.restServiceWrapper = restServiceWrapper;
     }
 
     @WorkerThread

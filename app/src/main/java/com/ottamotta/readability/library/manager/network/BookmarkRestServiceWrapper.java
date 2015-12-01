@@ -28,8 +28,12 @@ public class BookmarkRestServiceWrapper {
         return instance;
     }
 
-    private BookmarkRestServiceWrapper() {
+    BookmarkRestServiceWrapper() {
         restService = ReadabilityRestAdapter.getInstance().getAdapter().create(BookmarksRestService.class);
+    }
+
+    public BookmarkRestServiceWrapper(ReadabilityRestAdapter readabilityRestAdapter) {
+        restService = readabilityRestAdapter.getAdapter().create(BookmarksRestService.class);
     }
 
     @WorkerThread
