@@ -27,8 +27,8 @@
 
         <activity
             android:name=".library.LibraryActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="stateHidden">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -38,7 +38,11 @@
 
         </activity>
 
-        <activity android:name=".library.BookmarkDetailsActivity"/>
+        <activity
+            android:name=".library.loaders.LibraryLoadersActivity"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity android:name=".library.BookmarkDetailsActivity" />
 
 
     </application>

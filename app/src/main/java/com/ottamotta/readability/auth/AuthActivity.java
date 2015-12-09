@@ -15,6 +15,7 @@ import com.ottamotta.readability.common.ui.BaseActivity;
 import com.ottamotta.readability.credentials.CredentialsManager;
 import com.ottamotta.readability.credentials.OAuthCredentials;
 import com.ottamotta.readability.library.LibraryActivity;
+import com.ottamotta.readability.library.loaders.LibraryLoadersActivity;
 
 import butterknife.Bind;
 import butterknife.BindInt;
@@ -45,7 +46,7 @@ public class AuthActivity extends BaseActivity {
         @Override
         public void onAuthCredsReceived(OAuthCredentials credentials) {
             Log.d(TAG, "Got OAuth credentials: " + credentials.toString());
-            LibraryActivity.start(AuthActivity.this);
+            LibraryLoadersActivity.start(AuthActivity.this);
         }
 
         @Override
@@ -67,7 +68,7 @@ public class AuthActivity extends BaseActivity {
         setupWebView();
 
         if (CredentialsManager.getInstance().getoAuthCredentials() != null) {
-            LibraryActivity.start(this);
+            LibraryLoadersActivity.start(this);
             finish();
         } else {
             oAuthHelper.setListener(oauthListener);
